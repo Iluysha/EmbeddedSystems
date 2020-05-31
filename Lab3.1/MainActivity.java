@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        double start = System.nanoTime();
+
         if(num % 2 == 0) {
             textView.setText(num + " = " + 2 + " * " + num / 2);
         } else {
@@ -38,9 +40,14 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 while (true) {
                     x++;
+                    if((System.nanoTime() - start)/1000000000 > 1){
+                        textView.setText("Time exhausted!");
+                        break;
+                    }
                     double y = Math.sqrt(Math.pow(x, 2) - num);
                     if (y % 1 == 0) {
-                        textView.setText(num + " = " + (x - (int) y) + " * " + (x + (int) y));
+                        textView.setText(num + " = " + (x - (int) y) + " * " + (x + (int) y) +
+                                "\n" + "Time = " + (System.nanoTime() - start)/1000000 + " ms\n");
                         break;
                     }
                 }

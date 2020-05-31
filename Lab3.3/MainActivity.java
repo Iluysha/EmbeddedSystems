@@ -16,30 +16,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    @SuppressLint("SetTextI18n")
-    public void Calculate(View view) {
-        TextView textView = findViewById(R.id.textView);
-        EditText editText = findViewById(R.id.a);
-        int a = editText.getText().toString().equals("") ? 2 :
-                Integer.parseInt(editText.getText().toString());
-        editText = findViewById(R.id.b);
-        int b = editText.getText().toString().equals("") ? 6 :
-                Integer.parseInt(editText.getText().toString());
-        editText = findViewById(R.id.c);
-        int c = editText.getText().toString().equals("") ? 1 :
-                Integer.parseInt(editText.getText().toString());
-        editText = findViewById(R.id.d);
-        int d = editText.getText().toString().equals("") ? 4 :
-                Integer.parseInt(editText.getText().toString());
-        editText = findViewById(R.id.y);
-        int y = editText.getText().toString().equals("") ? 17 :
-                Integer.parseInt(editText.getText().toString());
-
-        int max =  Math.max(Math.max(a, b), Math.max(c, d));
-        if(a + b + c + d > y) {
-            textView.setText("Incorrect input!");
-            return;
+    void Mutation(int[][] gen, int chance){
+        Random random = new Random();
+        for(int i = 0; i < gen.length; i++) {
+            if(random.nextInt(100) < chance) {
+                gen[i][random.nextInt(3)]++;
+                gen[i][random.nextInt(3)]--;
+            }
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    int Genetic(int a, int b, int c, int d, int y, int max, int chance) {
+        TextView textView = findViewById(R.id.textView);
 
         Random random = new Random();
         int[][] gen = new int[][] {
@@ -54,12 +43,12 @@ public class MainActivity extends AppCompatActivity {
 
         int counter = 0;
         double start = System.nanoTime();
-        
+
         while (true) {
             counter++;
             if(counter > 100000000) {
                 textView.setText("Limit of iterations!");
-                return;
+                return 0;
             }
             int[] delta = new int[4];
             int sum_delta = 0;
@@ -73,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                             d + " * " + gen[i][3] + " = " + y + "\n" +
                             "Number of iterations = " + counter + "\n" +
                             "Time = " + (System.nanoTime() - start)/1000000 + " ms\n");
-                    return;
+                    return counter;
                 }
                 sum_delta += (double) 1 / delta[i];
             }
@@ -104,9 +93,51 @@ public class MainActivity extends AppCompatActivity {
                     gen[keys[3]][0], gen[keys[3]][1]};
 
             //Mutation
-            gen[random.nextInt(3)][random.nextInt(3)]++;
-            gen[random.nextInt(3)][random.nextInt(3)] =
-                    gen[random.nextInt(3)][random.nextInt(3)];
+            Mutation(gen, chance);
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    public void Calculate(View view) {
+        TextView textView = findViewById(R.id.textView);
+        TextView textChance = findViewById(R.id.textChance);
+        EditText editText = findViewById(R.id.a);
+        int a = editText.getText().toString().equals("") ? 2 :
+                Integer.parseInt(editText.getText().toString());
+        editText = findViewById(R.id.b);
+        int b = editText.getText().toString().equals("") ? 6 :
+                Integer.parseInt(editText.getText().toString());
+        editText = findViewById(R.id.c);
+        int c = editText.getText().toString().equals("") ? 1 :
+                Integer.parseInt(editText.getText().toString());
+        editText = findViewById(R.id.d);
+        int d = editText.getText().toString().equals("") ? 4 :
+                Integer.parseInt(editText.getText().toString());
+        editText = findViewById(R.id.y);
+        int y = editText.getText().toString().equals("") ? 17 :
+                Integer.parseInt(editText.getText().toString());
+
+        int max =  Math.max(Math.max(a, b), Math.max(c, d));
+        if(a + b + c + d > y) {
+            textView.setText("Incorrect input!");
+            return;
+        }
+
+        //Genetic(a, b, c, d, y, max, 50);
+        int[] res = new int[10];
+        for(int i = 0; i < 10; i++){
+            res[i] = Genetic(a, b, c, d, y, max, 10 * (i + 1));
+        }
+        int min = res[0];
+        for (int r : res) {
+            if (r < min) {
+                min = r;
+            }
+        }
+        for (int i = 0; i < res.length; i++) {
+            if (res[i] == min) {
+                textChance.setText("Best % of mutations = " + 10 * (i + 1) + "\n");
+            }
         }
     }
 }
