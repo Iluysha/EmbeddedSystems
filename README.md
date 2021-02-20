@@ -1,2 +1,2 @@
-# Embedded_systems
+# EmbeddedSystems
 Embedded systems programs
