@@ -1,2 +1,2 @@
 # Embedded_systems
-Embedded systems labs
+Embedded systems programs
